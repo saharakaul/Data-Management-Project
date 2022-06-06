@@ -4,7 +4,9 @@ import json
 # Initialize song list
 songs = []
 
-users = [ ]
+users = []
+
+
 
 
 def newUser(username, password):
@@ -24,6 +26,14 @@ def newSong(title, artist, genre):
         "artist": artist,
         "genre": genre
     }
+
+
+def linear_search(an_array, item, key):
+   for i in range(len(an_array)):
+       if an_array[i][key]== item:
+           return i
+   return -1
+
 
 
 # Add songs to list
@@ -49,10 +59,10 @@ while True:
           """)
     userCommand = int(input("What would you like to do?"))
     if userCommand == 1:
-        usernameInput = input("What is your username?").lower
+        usernameInput = input("What is your username?").lower()
         pinInput = int(input("What is your pin?"))
         for user in users:
-            if (usernameInput == user['username'] and pinInput == user['password']):
+            if usernameInput == user['username'] and pinInput == int(user['password']):
                 print("Login successful!")
                 loop = False
                 newloop = True
@@ -83,17 +93,13 @@ while True:
                     if Number == 3:
                         favoriteSong = input(
                             "Please enter the title of the song you would like to add to your favorite list")
-                        for song in songs:
-                            if song['title'] == favoriteSong:
-                                favoritesongs.append(song)
-                                json_string = json.dumps(favoritesongs)
-                                # The data as a JSON string may be easily saved to a file
-                                file = open("songnames.txt", "w")
-                                file.write(json_string)
-                                file.close()
 
-                            else:
-                                print("Song not found")
+                        print(favoriteSong, songs[0:5])
+                        if linear_search(songs, favoriteSong, 'title') == -1:
+                            print("Song found and added to favorites list")
+                        else:
+                            print("Song not found")
+
                     # Remove songs from favorite list
                     if Number == 4:
                         removedSong = input(
@@ -105,7 +111,7 @@ while True:
                                 file = open("songnames.txt", "w")
                                 file.write(json_string)
                                 file.close()
-
+                        print("song removed")
                     # Print out favorites list
                     if Number == 5:
                         # print(favoritesongs)
