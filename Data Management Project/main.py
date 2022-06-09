@@ -3,12 +3,20 @@
 import json
 # Initialize song list
 songs = []
-
+#Initialize user list
 users = []
 
+# Load a JSON string from a file
+file = open("songnames.txt", "r")
+json_string_from_file = file.read()
+file.close()
 
+# the loads() method will convert a json string to data
+data2 = json.loads(json_string_from_file)
+for data in data2:
+    users.append(data)
 
-
+#Creating a new user
 def newUser(username, password):
 	return {
 		"username": username,
@@ -34,9 +42,9 @@ def linear_search(an_array, item, key):
            return i
    return -1
 
-
-
 # Add songs to list
+
+
 songs.append(newSong("sultans of swing", "dire straits", "rock n roll"))
 songs.append(newSong("sos", "abba", "80s pop"))
 songs.append(newSong("lovelier than you", "b.o.b", "pop"))
@@ -50,9 +58,11 @@ songs.append(newSong("we are young", "fun", "pop"))
 songs.append(newSong("still into you", "paramore", "rock"))
 songs.append(newSong("west end girls", "pet shop boys", "techno"))
 songs.append(newSong("boulevard of broken dreams", "green day", "rock"))
+
+
 #Sign up/in page
 loop = True
-while True:
+while loop:
     print("""\nWhat would you like to do? 
         1.Login 
         2.Sign up 
@@ -64,9 +74,10 @@ while True:
         for user in users:
             if usernameInput == user['username'] and pinInput == int(user['password']):
                 print("Login successful!")
-                loop = False
+                currentfav = user
+                favoritesongs = currentfav["favoriteSongs"]
                 newloop = True
-                while True:
+                while newloop:
                     # Print main menu
                     print("""\nWhat would you like to do? 
                                   User Menu
@@ -75,7 +86,7 @@ while True:
                                     3.Add Song to Favourites List
                                     4.Remove Song from Favourites List
                                     5.Display Favourites List
-                                    6.Logout""")
+                                    6.Save and quit""")
                     # Get user command
                     Number = int(input("Please enter your command"))
                     # Print out entire song list
@@ -91,12 +102,11 @@ while True:
                                 print(song)
                     # Add to favorite songs
                     if Number == 3:
-                        favoriteSong = input(
-                            "Please enter the title of the song you would like to add to your favorite list")
+                        favoriteSong = input("Please enter the title of the song you would like to add to your favorite list")
 
-                        print(favoriteSong, songs[0:5])
-                        if linear_search(songs, favoriteSong, 'title') == -1:
+                        if linear_search(songs, favoriteSong, 'title') != -1:
                             print("Song found and added to favorites list")
+                            favoritesongs.append(favoriteSong)
                         else:
                             print("Song not found")
 
@@ -104,30 +114,39 @@ while True:
                     if Number == 4:
                         removedSong = input(
                             "Please enter the title of the song you would like to remove from your favorite list")
-                        for song in favoritesongs:
-                            if song['title'] == removedSong:
-                                favoritesongs.remove(song)
-                                json_string = json.dumps(favoritesongs)
-                                file = open("songnames.txt", "w")
-                                file.write(json_string)
-                                file.close()
-                        print("song removed")
+                        if linear_search(songs, favoriteSong, 'title') != -1:
+                            favoritesongs.remove(song)
+                            json_string = json.dumps(favoritesongs)
+                            file = open("songnames.txt", "w")
+                            file.write(json_string)
+                            file.close()
+                            print("Song removed")
+                        else:
+                            print("Song not found in your favorites list")
                     # Print out favorites list
                     if Number == 5:
                         # print(favoritesongs)
                         # Load a JSON string from a file
-                        file = open("songnames.txt", "r")
-                        json_string_from_file = file.read()
-                        file.close()
-
-                        # the loads() method will convert a json string to data
-                        data2 = json.loads(json_string_from_file)
-                        for data in data2:
-                            print(data)
+                        print(favoritesongs)
                     # Log out
                     if Number == 6:
+                        json_string = json.dumps(users)
+
+                        file = open("songnames.txt", "w")
+                        file.write(json_string)
+                        file.close()
                         newloop = False
                         print("You have been logged out")
-# Create main menu loop
+                        loop = True
+            break
+    if userCommand == 2:
+        newUsername = input("Please enter your username ")
+        newPin = int(input("Please enter your pin "))
+        users.append(newUser(newUsername, newPin))
+        json_string = json.dumps(users,indent=4)
+        file = open("songnames.txt", "w")
+        file.write(json_string)
+        file.close()
+
 
 
